@@ -15,13 +15,23 @@ export const Route = createFileRoute("/book")({
   component: Book,
 });
 
-const servicePrices: Record<string, number> = {
-  "Individual Counseling": 5000,
-  "Premarital Counseling": 3000,
-  "Marriage & Couples": 10000,
-  "Family Life": 15000,
-  "Faith & Life Coaching": 5000,
-  "Online Counseling": 3000,
+const EXCHANGE_RATE = 1500; // Assuming 1500 NGN per USD
+
+const servicePrices: Record<string, { display: string, amount: number }> = {
+  "Individual Counseling": { display: "$50", amount: 50 },
+  "Individual Counseling (6-session package)": { display: "$270", amount: 270 },
+  "Individual Counseling (12-session healing journey)": { display: "$500", amount: 500 },
+  "Premarital Counseling": { display: "$30", amount: 30 },
+  "Premarital Counseling (4-session package)": { display: "$100", amount: 100 },
+  "Premarital Counseling (8-session package)": { display: "$200", amount: 200 },
+  "Marriage & Couples Counseling": { display: "$100", amount: 100 },
+  "Marriage & Couples (6-session package)": { display: "$550", amount: 550 },
+  "Marriage & Couples (12-session Relationship Renewal)": { display: "$1000", amount: 1000 },
+  "Family Life Counseling": { display: "$150", amount: 150 },
+  "Family Life (6-session package)": { display: "$800", amount: 800 },
+  "Family Life (12-session Family Harmony)": { display: "$1500", amount: 1500 },
+  "Faith & Life Coaching": { display: "$50 (Custom Base)", amount: 50 },
+  "Online Counseling": { display: "$30 (Flexible Base)", amount: 30 },
 };
 
 function Book() {
@@ -30,13 +40,16 @@ function Book() {
   const [name, setName] = useState("");
   const [service, setService] = useState("");
 
-  const amount = servicePrices[service] || 5000;
+  const selectedService = servicePrices[service];
+  const displayPrice = selectedService ? selectedService.display : "";
+  // amount in kobo (USD amount * Exchange Rate * 100)
+  const amountInKobo = selectedService ? selectedService.amount * EXCHANGE_RATE * 100 : 50 * EXCHANGE_RATE * 100;
 
   const config = {
     reference: new Date().getTime().toString(),
     email,
-    amount,
-    currency: "USD",
+    amount: amountInKobo,
+    currency: "NGN",
     publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "",
     metadata: {
       custom_fields: [
@@ -69,7 +82,14 @@ function Book() {
       </section>
 
       <section className="container-px mx-auto max-w-7xl pb-24 grid lg:grid-cols-5 gap-10">
-        <form onSubmit={handleSubmit} className="lg:col-span-3 rounded-3xl bg-card border border-border/60 p-8 lg:p-10">
+        {sent ? (
+          <div className="lg:col-span-3 rounded-3xl bg-maroon/5 border border-maroon/20 p-12 text-center flex flex-col items-center justify-center">
+            <div className="h-16 w-16 rounded-full bg-maroon text-cream flex items-center justify-center text-2xl mb-6"><Check className="h-8 w-8" /></div>
+            <h2 className="font-display text-4xl text-maroon">Thank You!</h2>
+            <p className="mt-4 text-foreground/80 text-lg">Your payment was successful and your session is confirmed. We will reach out to you shortly.</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="lg:col-span-3 rounded-3xl bg-card border border-border/60 p-8 lg:p-10">
           <h2 className="font-display text-3xl">Schedule your consultation</h2>
           <p className="text-sm text-muted-foreground mt-2">Fields marked * are required.</p>
 
@@ -80,12 +100,30 @@ function Book() {
             <F label="Location / Country *" name="location" placeholder="e.g., Lagos, Nigeria" />
             <F label="Service Type *" name="service" as="select" value={service} onChange={(e: any) => setService(e.target.value)}>
               <option>Select a service</option>
-              <option>Individual Counseling</option>
-              <option>Premarital Counseling</option>
-              <option>Marriage & Couples</option>
-              <option>Family Life</option>
-              <option>Faith & Life Coaching</option>
-              <option>Online Counseling</option>
+              <optgroup label="Individual Counseling">
+                <option value="Individual Counseling">1 Session ($50)</option>
+                <option value="Individual Counseling (6-session package)">6-Session Package ($270)</option>
+                <option value="Individual Counseling (12-session healing journey)">12-Session Journey ($500)</option>
+              </optgroup>
+              <optgroup label="Premarital Counseling">
+                <option value="Premarital Counseling">1 Session ($30)</option>
+                <option value="Premarital Counseling (4-session package)">4-Session Package ($100)</option>
+                <option value="Premarital Counseling (8-session package)">8-Session Package ($200)</option>
+              </optgroup>
+              <optgroup label="Marriage & Couples">
+                <option value="Marriage & Couples Counseling">1 Session ($100)</option>
+                <option value="Marriage & Couples (6-session package)">6-Session Package ($550)</option>
+                <option value="Marriage & Couples (12-session Relationship Renewal)">12-Session Renewal ($1000)</option>
+              </optgroup>
+              <optgroup label="Family Life">
+                <option value="Family Life Counseling">1 Session ($150)</option>
+                <option value="Family Life (6-session package)">6-Session Package ($800)</option>
+                <option value="Family Life (12-session Family Harmony)">12-Session Harmony ($1500)</option>
+              </optgroup>
+              <optgroup label="Other">
+                <option value="Faith & Life Coaching">Faith & Life Coaching</option>
+                <option value="Online Counseling">Online Counseling</option>
+              </optgroup>
             </F>
             <F label="Session Type *" name="sessionType" as="select">
               <option>Online (Zoom/Google Meet)</option>
@@ -98,10 +136,11 @@ function Book() {
             </div>
           </div>
 
-          <button className="mt-7 rounded-full bg-maroon text-primary-foreground px-7 py-3.5 font-medium hover:bg-maroon/90">
-            {sent ? "Request received ✓ — we'll be in touch" : "Continue to consultation"}
+          <button className="mt-7 rounded-full bg-maroon text-primary-foreground px-7 py-3.5 font-medium hover:bg-maroon/90 w-full sm:w-auto">
+            {sent ? "Request received ✓ — we'll be in touch" : `Continue to consultation ${displayPrice ? `(${displayPrice})` : ""}`}
           </button>
-        </form>
+          </form>
+        )}
 
         <aside className="lg:col-span-2 space-y-5">
           {[
