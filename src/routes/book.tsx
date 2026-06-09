@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { usePaystackPayment } from "react-paystack";
 import { Check } from "lucide-react";
 
 export const Route = createFileRoute("/book")({
@@ -14,8 +15,51 @@ export const Route = createFileRoute("/book")({
   component: Book,
 });
 
+const servicePrices: Record<string, number> = {
+  "Individual Counseling": 5000,
+  "Premarital Counseling": 3000,
+  "Marriage & Couples": 10000,
+  "Family Life": 15000,
+  "Faith & Life Coaching": 5000,
+  "Online Counseling": 3000,
+};
+
 function Book() {
   const [sent, setSent] = useState(false);
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [service, setService] = useState("");
+
+  const amount = servicePrices[service] || 5000;
+
+  const config = {
+    reference: new Date().getTime().toString(),
+    email,
+    amount,
+    currency: "USD",
+    publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "",
+    metadata: {
+      custom_fields: [
+        { display_name: "Name", variable_name: "name", value: name },
+        { display_name: "Service", variable_name: "service", value: service }
+      ]
+    }
+  };
+
+  const initializePayment = usePaystackPayment(config);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !email || !service || service === "Select a service") {
+      alert("Please fill in your name, email and select a service.");
+      return;
+    }
+    
+    initializePayment({
+      onSuccess: () => setSent(true),
+      onClose: () => console.log("Payment modal closed")
+    });
+  };
   return (
     <>
       <section className="container-px mx-auto max-w-7xl pt-20 pb-10 text-center">
@@ -25,16 +69,16 @@ function Book() {
       </section>
 
       <section className="container-px mx-auto max-w-7xl pb-24 grid lg:grid-cols-5 gap-10">
-        <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} className="lg:col-span-3 rounded-3xl bg-card border border-border/60 p-8 lg:p-10">
+        <form onSubmit={handleSubmit} className="lg:col-span-3 rounded-3xl bg-card border border-border/60 p-8 lg:p-10">
           <h2 className="font-display text-3xl">Schedule your consultation</h2>
           <p className="text-sm text-muted-foreground mt-2">Fields marked * are required.</p>
 
           <div className="mt-8 grid sm:grid-cols-2 gap-5">
-            <F label="Full name *" name="name" />
-            <F label="Email *" name="email" type="email" />
+            <F label="Full name *" name="name" value={name} onChange={(e: any) => setName(e.target.value)} />
+            <F label="Email *" name="email" type="email" value={email} onChange={(e: any) => setEmail(e.target.value)} />
             <F label="Phone *" name="phone" placeholder="+234…" />
             <F label="Location / Country *" name="location" placeholder="e.g., Lagos, Nigeria" />
-            <F label="Service Type *" name="service" as="select">
+            <F label="Service Type *" name="service" as="select" value={service} onChange={(e: any) => setService(e.target.value)}>
               <option>Select a service</option>
               <option>Individual Counseling</option>
               <option>Premarital Counseling</option>
@@ -88,17 +132,17 @@ function Book() {
   );
 }
 
-function F({ label, name, type = "text", placeholder, as, children }: any) {
+function F({ label, name, type = "text", placeholder, as, children, value, onChange }: any) {
   const cls = "mt-2 w-full rounded-xl border border-input bg-cream px-4 py-3 text-sm focus:outline-none focus:border-maroon transition";
   return (
     <label className="block">
       <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground font-medium">{label}</span>
       {as === "textarea" ? (
-        <textarea name={name} rows={5} placeholder={placeholder} className={cls} />
+        <textarea name={name} rows={5} placeholder={placeholder} className={cls} value={value} onChange={onChange} />
       ) : as === "select" ? (
-        <select name={name} className={cls}>{children}</select>
+        <select name={name} className={cls} value={value} onChange={onChange}>{children}</select>
       ) : (
-        <input name={name} type={type} placeholder={placeholder} className={cls} />
+        <input name={name} type={type} placeholder={placeholder} className={cls} value={value} onChange={onChange} />
       )}
     </label>
   );
