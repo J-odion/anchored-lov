@@ -9,7 +9,11 @@ export default defineConfig({
     tailwindcss(),
     tsConfigPaths({ projects: ["./tsconfig.json"] }),
     tanstackStart({
-      server: { entry: "server" }
+      server: { 
+        // @ts-expect-error: preset is supported by Nitro but missing in types
+        preset: "vercel",
+        entry: "server" 
+      }
     }),
     react(),
   ],
