@@ -1,17 +1,8 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  Outlet,
-  Link,
-  createRootRouteWithContext,
-  useRouter,
-} from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
-
-import appCss from "../styles.css?url";
+import { Outlet, Link } from "react-router-dom";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 
-function NotFoundComponent() {
+export function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
@@ -28,17 +19,19 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
-  console.error(error);
-  const router = useRouter();
-  useEffect(() => {}, [error]);
+export function ErrorComponent({ error, reset }: { error?: Error; reset?: () => void }) {
+  if (error) console.error(error);
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold text-foreground">This page didn't load</h1>
         <p className="mt-2 text-sm text-muted-foreground">Try refreshing or head back home.</p>
         <div className="mt-6 flex justify-center gap-2">
-          <button onClick={() => { router.invalidate(); reset(); }} className="rounded-full bg-maroon px-5 py-2.5 text-sm text-primary-foreground hover:bg-maroon/90">Try again</button>
+          {reset && (
+            <button onClick={() => reset()} className="rounded-full bg-maroon px-5 py-2.5 text-sm text-primary-foreground hover:bg-maroon/90">
+              Try again
+            </button>
+          )}
           <a href="/" className="rounded-full border px-5 py-2.5 text-sm hover:bg-accent/10">Go home</a>
         </div>
       </div>
@@ -46,21 +39,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  component: RootComponent,
-  notFoundComponent: NotFoundComponent,
-  errorComponent: ErrorComponent,
-});
-
-function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
+export default function Layout() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1"><Outlet /></main>
-        <Footer />
-      </div>
-    </QueryClientProvider>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1"><Outlet /></main>
+      <Footer />
+    </div>
   );
 }

@@ -1,21 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
+
 import { Instagram, Play, ExternalLink, ArrowRight } from "lucide-react";
 const EVENT1_URL = "/love team.jpeg";
 const EVENT2_URL = "/love banner.jpeg";
 const EVENT3_URL = "/love 1.jpeg";
 
-export const Route = createFileRoute("/our-story")({
-  head: () => ({
-    meta: [
-      { title: "Our Story · Anchored Love" },
-      { name: "description", content: "Live events, community moments, videos, and Instagram highlights from Anchored Love's Love Without Walls journey." },
-      { property: "og:title", content: "Our Story · Anchored Love" },
-      { property: "og:description", content: "Live events, videos and community moments from Anchored Love." },
-      { property: "og:image", content: EVENT3_URL },
-    ],
-  }),
-  component: OurStory,
-});
+
 
 const videos = [
   { id: "VqUg9RXSrFg", type: "video", title: "Anchored Love · Session Highlight" },
@@ -52,7 +42,7 @@ const igPosts = [
   }
 ];
 
-function OurStory() {
+export default function OurStory() {
   return (
     <>
       {/* HERO */}

@@ -1,17 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
+
 import { Check, ArrowRight } from "lucide-react";
 
-export const Route = createFileRoute("/services")({
-  head: () => ({
-    meta: [
-      { title: "Services · Anchored Love" },
-      { name: "description", content: "Individual, premarital, marriage, family counseling and faith coaching — comprehensive Christ-centered support." },
-      { property: "og:title", content: "Services · Anchored Love" },
-      { property: "og:description", content: "Comprehensive faith-based counseling services tailored to your needs." },
-    ],
-  }),
-  component: Services,
-});
+
 
 const services = [
   {
@@ -52,7 +43,7 @@ const services = [
   },
 ];
 
-function Services() {
+export default function Services() {
   return (
     <>
       <section className="container-px mx-auto max-w-7xl pt-20 pb-12 text-center">

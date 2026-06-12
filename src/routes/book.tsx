@@ -1,19 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+
 import { useState } from "react";
 import { usePaystackPayment } from "react-paystack";
 import { Check } from "lucide-react";
 
-export const Route = createFileRoute("/book")({
-  head: () => ({
-    meta: [
-      { title: "Book a Session · Anchored Love" },
-      { name: "description", content: "Schedule your 15-minute consultation call with Anchored Love." },
-      { property: "og:title", content: "Book a Session · Anchored Love" },
-      { property: "og:description", content: "Take the first step toward healing and restoration." },
-    ],
-  }),
-  component: Book,
-});
+
 
 const EXCHANGE_RATE = 1500; // Assuming 1500 NGN per USD
 
@@ -34,7 +24,7 @@ const servicePrices: Record<string, { display: string, amount: number }> = {
   "Online Counseling": { display: "$30 (Flexible Base)", amount: 30 },
 };
 
-function Book() {
+export default function Book() {
   const [sent, setSent] = useState(false);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");

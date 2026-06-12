@@ -1,20 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+
 import { Phone, Mail, Instagram, Shield } from "lucide-react";
 import { useState } from "react";
 
-export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact · Anchored Love" },
-      { name: "description", content: "Reach out via phone, email, or our message form. Response within 24 hours." },
-      { property: "og:title", content: "Contact · Anchored Love" },
-      { property: "og:description", content: "Get in touch with Anchored Love." },
-    ],
-  }),
-  component: Contact,
-});
 
-function Contact() {
+
+export default function Contact() {
   const [sent, setSent] = useState(false);
   return (
     <>

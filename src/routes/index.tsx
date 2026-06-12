@@ -1,8 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
+
 import { motion } from "framer-motion";
 import { ArrowRight, Heart, Sparkles, Shield, Leaf } from "lucide-react";
 const HERO_IMG = "/love 1.jpeg";
-const COUNSELOR_IMG = "/love w.jpeg";
+const COUNSELOR_IMG = "/meet.jpeg";
 const avatars = [
   "https://i.pravatar.cc/150?img=1",
   "https://i.pravatar.cc/150?img=2",
@@ -10,17 +11,7 @@ const avatars = [
   "https://i.pravatar.cc/150?img=4"
 ];
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Anchored Love · Strengthening Hearts, Restoring Homes" },
-      { name: "description", content: "Faith-based counseling for individuals, couples and families. Book a Christ-centered session today." },
-      { property: "og:title", content: "Anchored Love · Faith-Based Counseling" },
-      { property: "og:description", content: "Christ-centered counseling for individuals, couples and families." },
-    ],
-  }),
-  component: Home,
-});
+
 
 const services = [
   { icon: "💙", title: "Individual Counseling", price: "$50", desc: "Confidential support for stress, grief, anxiety, trauma and spiritual growth." },
@@ -38,7 +29,7 @@ const values = [
   { icon: Sparkles, title: "Restoration & Renewal", desc: "New beginnings await" },
 ];
 
-function Home() {
+export default function Home() {
   return (
     <>
       {/* HERO */}
@@ -158,7 +149,7 @@ function Home() {
           </div>
           <div className="grid grid-cols-3 gap-3">
             <div className="col-span-2 aspect-[4/5] rounded-2xl overflow-hidden">
-              <img src={COUNSELOR_IMG} alt="" className="h-full w-full object-cover" />
+              <img src={COUNSELOR_IMG} alt="" className="h-full w-full flip-horizontal object-cover" />
             </div>
             <div className="space-y-3">
               <div className="aspect-square rounded-2xl bg-ember/30 backdrop-blur p-5 flex flex-col justify-end">

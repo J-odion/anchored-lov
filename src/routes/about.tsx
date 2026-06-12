@@ -1,19 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
+
 import { Check } from "lucide-react";
 const EVENT3_URL = "/love w.jpeg";
 
-export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About · Anchored Love" },
-      { name: "description", content: "Our story, mission, and the counselor behind Anchored Love — Folashade Bamitale-Laizer." },
-      { property: "og:title", content: "About · Anchored Love" },
-      { property: "og:description", content: "Meet your counselor and learn our mission." },
-      { property: "og:image", content: EVENT3_URL },
-    ],
-  }),
-  component: About,
-});
+
 
 const specializations = [
   "Marriage & Relationship Counseling",
@@ -31,7 +21,7 @@ const values = [
   { e: "🕊️", t: "Restoration & Renewal", d: "Every story can find hope. New beginnings await." },
 ];
 
-function About() {
+export default function About() {
   return (
     <>
       <section className="container-px mx-auto max-w-7xl pt-20 pb-16 text-center">
